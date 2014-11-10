@@ -200,7 +200,7 @@ public class SkipList<T extends Comparable<T>>
         public boolean hasNext()
         {
           failFast();
-          return cursor.forward[0] != null;
+          return cursor.forward[1] != null;
         } // hasNext()
 
         @Override
@@ -210,7 +210,7 @@ public class SkipList<T extends Comparable<T>>
           if (!this.hasNext())
             throw new NoSuchElementException();
           // Advance to the next node.
-          this.cursor = this.cursor.forward[0];
+          this.cursor = this.cursor.forward[1];
           // Return the data in the now current node.
           return this.cursor.val;
         } // next()
