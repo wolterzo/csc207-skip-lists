@@ -224,9 +224,10 @@ public class SkipList<T extends Comparable<T>>
     Node<T>[] update = new Node[this.maxLevel];
     Node<T> newNode = new Node<T>(val, newLevel);
     Node<T> tmp = this.first;
-    for(int i = this.levels; i >= 1; i--)
+    for (int i = this.levels; i >= 1; i--)
       {
-        while(tmp.forward[i].val != null && tmp.forward[i].val.compareTo(val) < 0)
+        while (tmp.forward[i].val != null
+               && tmp.forward[i].val.compareTo(val) < 0)
           {
             tmp = tmp.forward[i];
           } // while
@@ -253,7 +254,20 @@ public class SkipList<T extends Comparable<T>>
    */
   public boolean contains(T val)
   {
-    // STUB
+    Node<T> tmp = this.first;
+    for (int i = this.levels; i > 0; i--)
+      {
+        while (tmp.forward[i].val != null
+               && tmp.forward[i].val.compareTo(val) < 0)
+          {
+            tmp = tmp.forward[i];
+          } // while
+        tmp = tmp.forward[1];
+        if (tmp.val.compareTo(val) == 0)
+          return true;
+        else
+          return false;
+      } // for
     return false;
   } // contains(T)
 
