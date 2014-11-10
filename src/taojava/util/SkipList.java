@@ -144,6 +144,17 @@ public class SkipList<T extends Comparable<T>>
     return Math.min(newLevel, this.maxLevel);
   } // randomLevel()
 
+  /**
+   * Determine if the given node has a next element at the given level.
+   * @param node
+   * @return
+   */
+  @SuppressWarnings("unused")
+  private boolean hasNext(Node<T> node, int level)
+  {
+    return node.forward[level].val != null;
+  } // hasNext(Node<T>, int)
+
   // +-----------------------+-------------------------------------------
   // | Methods from Iterable |
   // +-----------------------+
@@ -226,8 +237,7 @@ public class SkipList<T extends Comparable<T>>
     Node<T> tmp = this.first;
     for (int i = this.levels; i >= 1; i--)
       {
-        while (tmp.forward[i].val != null
-               && tmp.forward[i].val.compareTo(val) < 0)
+        while (hasNext(tmp, i) && tmp.forward[i].val.compareTo(val) < 0)
           {
             tmp = tmp.forward[i];
           } // while
@@ -252,13 +262,13 @@ public class SkipList<T extends Comparable<T>>
   /**
    * Determine if the set contains a particular value.
    */
+  @SuppressWarnings("unused")
   public boolean contains(T val)
   {
     Node<T> tmp = this.first;
     for (int i = this.levels; i > 0; i--)
       {
-        while (tmp.forward[i].val != null
-               && tmp.forward[i].val.compareTo(val) < 0)
+        while (hasNext(tmp, i) && tmp.forward[i].val.compareTo(val) < 0)
           {
             tmp = tmp.forward[i];
           } // while
@@ -278,9 +288,34 @@ public class SkipList<T extends Comparable<T>>
    * @post For all lav != val, if contains(lav) held before the call
    *   to remove, contains(lav) continues to hold.
    */
+  @SuppressWarnings({ "unused", "unchecked" })
   public void remove(T val)
   {
-    // STUB
+    Node<T>[] update = new Node[maxLevel];
+    Node<T> tmp = this.first;
+    for (int i = this.levels; i > 0; i--)
+      {
+        while (hasNext(tmp, i) && tmp.forward[i].val.compareTo(val) < 0)
+          {
+            tmp = tmp.forward[i];
+          } // while
+        update[i] = tmp;
+      } // for
+    tmp = tmp.forward[1];
+    if (tmp.val.compareTo(val) == 0)
+      {
+        for (int i = 1; i <= this.levels; i++)
+          {
+            if (!update[i].forward[i].equals(tmp))
+              break;
+            update[i].forward[i] = tmp.forward[i];
+          } // for
+        while (this.levels > 1
+               && this.first.forward[this.levels].val == null)
+          {
+            this.levels--;
+          } // while
+      } // if
   } // remove(T)
 
   // +--------------------------+----------------------------------------
