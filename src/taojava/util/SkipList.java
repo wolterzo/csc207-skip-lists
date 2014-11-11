@@ -115,20 +115,9 @@ public class SkipList<T extends Comparable<T>>
   /**
    * Creates a SkipList with a maxLevel of 20.
    */
-  @SuppressWarnings({ "unchecked", "rawtypes" })
   public SkipList()
   {
-    this.maxLevel = 20;
-    this.levels = 1;
-    this.first = new Node(null, maxLevel);
-    this.last = new Node(null, maxLevel);
-    for (int i = 1; i < maxLevel; i++)
-      {
-        // set all nodes in last to null
-        this.last.forward[i] = null;
-        // point all nodes in first to the corresponding node in last
-        this.first.forward[i] = last;
-      } // for
+    this(20);
   } // SkipList()
 
   // +-------------------------+-----------------------------------------
@@ -200,7 +189,7 @@ public class SkipList<T extends Comparable<T>>
         public boolean hasNext()
         {
           failFast();
-          return cursor.forward[1] != null;
+          return SkipList.this.hasNext(cursor, 1);
         } // hasNext()
 
         @Override
@@ -214,6 +203,14 @@ public class SkipList<T extends Comparable<T>>
           // Return the data in the now current node.
           return this.cursor.val;
         } // next()
+
+        @Override
+        public void remove()
+        {
+          T val = cursor.val;
+          SkipList.this.remove(val);
+          this.mods++;
+        } // remove()
       };
   } // iterator()
 
@@ -257,6 +254,7 @@ public class SkipList<T extends Comparable<T>>
         newNode.forward[i] = update[i].forward[i];
         update[i].forward[i] = newNode;
       } // for
+    this.mods++;
   } // add(T val)
 
   /**
@@ -272,13 +270,16 @@ public class SkipList<T extends Comparable<T>>
           {
             tmp = tmp.forward[i];
           } // while
-        tmp = tmp.forward[1];
-        if (tmp.val.compareTo(val) == 0)
-          return true;
-        else
-          return false;
       } // for
-    return false;
+    if(!hasNext(tmp, 1))
+      {
+        return false;
+      } // if
+    tmp = tmp.forward[1];
+    if (tmp.val.compareTo(val) == 0)
+      return true;
+    else
+      return false;
   } // contains(T)
 
   /**
@@ -302,7 +303,7 @@ public class SkipList<T extends Comparable<T>>
         update[i] = tmp;
       } // for
     tmp = tmp.forward[1];
-    if (tmp.val.compareTo(val) == 0)
+    if (tmp.val != null && tmp.val.compareTo(val) == 0)
       {
         for (int i = 1; i <= this.levels; i++)
           {
@@ -310,11 +311,11 @@ public class SkipList<T extends Comparable<T>>
               break;
             update[i].forward[i] = tmp.forward[i];
           } // for
-        while (this.levels > 1
-               && this.first.forward[this.levels].val == null)
+        while (this.levels > 1 && this.first.forward[this.levels].val == null)
           {
             this.levels--;
           } // while
+        this.mods++;
       } // if
   } // remove(T)
 
@@ -324,14 +325,27 @@ public class SkipList<T extends Comparable<T>>
 
   /**
    * Get the element at index i.
+   * (Not efficient method, but needed to pass tests.
    *
    * @throws IndexOutOfBoundsException
    *   if the index is out of range (index < 0 || index >= length)
    */
   public T get(int i)
   {
-    // STUB
-    return null;
+    Node<T> tmp = this.first;
+    for (int j = 0; j < i; j++)
+      {
+        if (!hasNext(tmp, 1))
+          {
+            throw new IndexOutOfBoundsException();
+          } // if
+        tmp = tmp.forward[1];
+      } // for
+    if (!hasNext(tmp, 1))
+      {
+        throw new IndexOutOfBoundsException();
+      } // if
+    return tmp.forward[1].val;
   } // get(int)
 
   /**
@@ -339,8 +353,14 @@ public class SkipList<T extends Comparable<T>>
    */
   public int length()
   {
-    // STUB
-    return 0;
+    int length = 0;
+    Node<T> tmp = this.first;
+    while (hasNext(tmp, 1))
+      {
+        tmp = tmp.forward[1];
+        length++;
+      } // while
+    return length;
   } // length()
 
 } // class SkipList<T>
