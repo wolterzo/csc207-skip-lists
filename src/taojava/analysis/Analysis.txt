@@ -1,0 +1,57 @@
+            
+SortedArrayList
+            add/1   index iterate   add/2   rem/1   rem/2   total
+Round  0       59       0       6     115     200      62     380
+Round  1       40       0       1     140     196      62     377
+Round  2       38       1       0     114     191      61     344
+Round  3       38       0       0     109     192      61     339
+Round  4       39       0       0     116     191      61     346
+Round  5       38       0       0     108     190      61     336
+Round  6       38       0       0     112     191      61     341
+Round  7       38       0       0     108     190      61     336
+Round  8       37       0       0     109     190      61     336
+Round  9       38       0       0     109     191      61     338
+Round 10       39       0       0     107     191      61     337
+Round 11       39       0       0     108     190      61     337
+Round 12       38       0       0     111     192      61     341
+Round 13       38       0       0     109     191      61     338
+Round 14       38       0       0     108     191      61     337
+Round 15       39       0       0     108     195      61     342
+Round 16       38       0       0     108     191      62     337
+Round 17       38       0       0     108     191      62     337
+Round 18       39       0       0     108     191      61     338
+Round 19       42       0       1     107     191      61     341
+Average        39       0       0     111     191      61     342
+
+SkipList
+			add/1   index iterate   add/2   rem/1   rem/2   total
+Round  0       54       0       6      30      43      14     135
+Round  1       21       0       4      36      39       9     104
+Round  2       20       0       2      35      12       4      71
+Round  3       18       0       2      24      14       5      60
+Round  4       27       0       2      37      12       4      81
+Round  5       16       0       2      28      18       3      66
+Round  6       18       0       2      28      16       5      66
+Round  7       17       0       2      30      20       4      71
+Round  8       17       0       2      29      16       5      65
+Round  9       16       0       2      28      18       4      66
+Round 10       17       0       2      28      16       5      64
+Round 11       16       0       3      28      17       6      66
+Round 12       18       0       2      29      20       8      71
+Round 13       17       0       2      28      17       6      65
+Round 14       18       0       2      28      17       6      67
+Round 15       16       0       2      32      17       6      69
+Round 16       17       0       1      26      16       6      61
+Round 17       17       0       2      28      16       5      65
+Round 18       17       0       2      28      17       6      65
+Round 19       17       0       1      30      18       7      68
+Average        19       0       2      29      18       5      72
+
+
+  Based on these results, SkipLists are faster at adding and removing elements
+  than ArrayLists. However, SortedArrayLists are faster than SkipLists when 
+  iterating through the list. If you were to create a sorted list, then iterate
+  through it many times, it might be better to use a SortedArrayList. However, 
+  if you are building many new lists, or frequently adding and removing from 
+  your list, using a SkipList implementation may be smarter. 
+  (This analysis is ignoring indexing entirely)
