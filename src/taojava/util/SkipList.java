@@ -16,6 +16,7 @@ import java.util.Random;
  * and 
  * http://www.mathcs.duq.edu/drozdek/DSinJava/SkipList.java
  * 
+ * Talked to Noah and China when fixing bugs
  */
 public class SkipList<T extends Comparable<T>>
     implements SortedList<T>

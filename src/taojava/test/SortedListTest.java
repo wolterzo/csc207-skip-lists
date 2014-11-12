@@ -2,6 +2,7 @@ package taojava.test;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 import java.util.Random;
 
 import static org.junit.Assert.*;
@@ -235,6 +236,9 @@ public class SortedListTest
       } // for i
   } // randomTest()
 
+  // +-------------+-------------------------------------------------
+  // | Added Tests |
+  // +-------------+
   @Test
   public void containsTest()
   {
@@ -326,4 +330,48 @@ public class SortedListTest
         assertTrue(it1.next().equals(it2.next()));
       } // for
   } // orderAddedTest()
+
+  /**
+   * Test to see if length works properly 
+   */
+  @Test
+  public void lengthTest()
+  {
+    int size = 200;
+    // Check if length increases as we add values
+    for (int i = 0; i < size; i++)
+      {
+        ints.add(i);
+        assertTrue(ints.length() == i + 1);
+      } // for
+    // Check if length decreases as we remove values
+    for (int i = size; i > 0; i--)
+      {
+        ints.remove(i - 1);
+        assertTrue(ints.length() == i - 1);
+      } // for
+    // List is empty, check length is 0
+    assertTrue(ints.length() == 0);
+  } // lengthTest()
+
+  /**
+   * Various empty list tests
+   */
+  @Test
+  public void emptyTests()
+  {
+    assertFalse(strings.contains("bears"));
+    assertFalse(ints.contains(6758));
+    assertFalse(ints.iterator().hasNext());
+    try
+      {
+        ints.iterator().next();
+        fail("Iterator's next method did not throw proper exception");
+      } // try
+    catch (Exception e)
+      {
+        // Test is a success
+      } // catch
+
+  }
 } // class SortedListTest
