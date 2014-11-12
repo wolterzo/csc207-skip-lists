@@ -100,10 +100,10 @@ public class SkipList<T extends Comparable<T>>
   public SkipList(int max)
   {
     this.maxLevel = max;
-    this.levels = 1;
+    this.levels = 0;
     this.first = new Node(null, maxLevel);
     this.last = new Node(null, maxLevel);
-    for (int i = 1; i < maxLevel; i++)
+    for (int i = 0; i < maxLevel; i++)
       {
         // set all nodes in last to null
         this.last.forward[i] = null;
@@ -125,12 +125,12 @@ public class SkipList<T extends Comparable<T>>
   // +-------------------------+
   private int randomLevel()
   {
-    int newLevel = 1;
+    int newLevel = 0;
     while (this.random.nextDouble() < this.probability)
       {
         newLevel = newLevel + 1;
       } // while
-    return Math.min(newLevel, this.maxLevel);
+    return Math.min(newLevel, this.maxLevel - 1);
   } // randomLevel()
 
   /**
@@ -189,7 +189,7 @@ public class SkipList<T extends Comparable<T>>
         public boolean hasNext()
         {
           failFast();
-          return SkipList.this.hasNext(cursor, 1);
+          return SkipList.this.hasNext(cursor, 0);
         } // hasNext()
 
         @Override
@@ -199,7 +199,7 @@ public class SkipList<T extends Comparable<T>>
           if (!this.hasNext())
             throw new NoSuchElementException();
           // Advance to the next node.
-          this.cursor = this.cursor.forward[1];
+          this.cursor = this.cursor.forward[0];
           // Return the data in the now current node.
           return this.cursor.val;
         } // next()
@@ -232,7 +232,7 @@ public class SkipList<T extends Comparable<T>>
     Node<T>[] update = new Node[this.maxLevel];
     Node<T> newNode = new Node<T>(val, newLevel);
     Node<T> tmp = this.first;
-    for (int i = this.levels; i >= 1; i--)
+    for (int i = this.levels; i >= 0; i--)
       {
         while (hasNext(tmp, i) && tmp.forward[i].val.compareTo(val) < 0)
           {
@@ -240,6 +240,8 @@ public class SkipList<T extends Comparable<T>>
           } // while
         update[i] = tmp;
       } // for
+    if (hasNext(tmp, 0) && tmp.forward[0].val.compareTo(val) == 0)
+      return;
     // if the newLevel is bigger than levels
     if (newLevel > this.levels)
       {
@@ -249,7 +251,7 @@ public class SkipList<T extends Comparable<T>>
           } // for
         this.levels = newLevel;
       } // if 
-    for (int i = 1; i <= newLevel; i++)
+    for (int i = 0; i <= newLevel; i++)
       {
         newNode.forward[i] = update[i].forward[i];
         update[i].forward[i] = newNode;
@@ -264,18 +266,18 @@ public class SkipList<T extends Comparable<T>>
   public boolean contains(T val)
   {
     Node<T> tmp = this.first;
-    for (int i = this.levels; i > 0; i--)
+    for (int i = this.levels; i >= 0; i--)
       {
         while (hasNext(tmp, i) && tmp.forward[i].val.compareTo(val) < 0)
           {
             tmp = tmp.forward[i];
           } // while
       } // for
-    if(!hasNext(tmp, 1))
+    if(!hasNext(tmp, 0))
       {
         return false;
       } // if
-    tmp = tmp.forward[1];
+    tmp = tmp.forward[0];
     if (tmp.val.compareTo(val) == 0)
       return true;
     else
@@ -294,7 +296,7 @@ public class SkipList<T extends Comparable<T>>
   {
     Node<T>[] update = new Node[maxLevel];
     Node<T> tmp = this.first;
-    for (int i = this.levels; i > 0; i--)
+    for (int i = this.levels; i >= 0; i--)
       {
         while (hasNext(tmp, i) && tmp.forward[i].val.compareTo(val) < 0)
           {
@@ -302,16 +304,16 @@ public class SkipList<T extends Comparable<T>>
           } // while
         update[i] = tmp;
       } // for
-    tmp = tmp.forward[1];
+    tmp = tmp.forward[0];
     if (tmp.val != null && tmp.val.compareTo(val) == 0)
       {
-        for (int i = 1; i <= this.levels; i++)
+        for (int i = 0; i <= this.levels; i++)
           {
             if (!update[i].forward[i].equals(tmp))
               break;
             update[i].forward[i] = tmp.forward[i];
           } // for
-        while (this.levels > 1 && this.first.forward[this.levels].val == null)
+        while (this.levels > 0 && this.first.forward[this.levels].val == null)
           {
             this.levels--;
           } // while
@@ -335,17 +337,17 @@ public class SkipList<T extends Comparable<T>>
     Node<T> tmp = this.first;
     for (int j = 0; j < i; j++)
       {
-        if (!hasNext(tmp, 1))
+        if (!hasNext(tmp, 0))
           {
             throw new IndexOutOfBoundsException();
           } // if
-        tmp = tmp.forward[1];
+        tmp = tmp.forward[0];
       } // for
-    if (!hasNext(tmp, 1))
+    if (!hasNext(tmp, 0))
       {
         throw new IndexOutOfBoundsException();
       } // if
-    return tmp.forward[1].val;
+    return tmp.forward[0].val;
   } // get(int)
 
   /**
@@ -355,9 +357,9 @@ public class SkipList<T extends Comparable<T>>
   {
     int length = 0;
     Node<T> tmp = this.first;
-    while (hasNext(tmp, 1))
+    while (hasNext(tmp, 0))
       {
-        tmp = tmp.forward[1];
+        tmp = tmp.forward[0];
         length++;
       } // while
     return length;
