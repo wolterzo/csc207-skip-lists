@@ -1,0 +1,19 @@
+1) <T extends Comparable<T>>
+  One interesting thing I learned was using an extension for general types to ensure that they can be compared to themselves.
+  By using the above code in the declaration of our interface/class, the class of object (T) must have whichever methods the      Comparable interface requires (in this case, just .compareTo(T val)).
+  This could be useful if you wanted a method that took ReadingMaterial, and would be able to accept a Book, Poem, Play, 
+  Newspaper, etc, but not a Donut.
+  
+2) Fields in a JUnit test
+  Another interesting thing I found was using fields within a JUnit test that were defined later. By this I mean, in 
+  SortedListTest, there were two declared fields `ints` and `strings` that had no object attached to them. SortedListTest.java 
+  only ran if you extended the class and declared those fields.
+  The benefit of this approach is being able to use the same tests for anything that implements the SortedList interface. 
+
+3) Keeping track of operations
+  Something I noticed when testing (and failing) was that if I test failed, a list of all the random actions performed and the 
+  current state of the list was printed out. This was definitely useful in determining what was going wrong with my code. This 
+  way, even though the actions are randomized, you're able to see what's happening. While the debugger is more useful in helping
+  to determine what is actually happening within the code, when you perform this amount of tests, it seems unreasonable to go 
+  through each iteration with the debugger. Keeping track of random actions is a smart way to gain some insight when debugging. 
+  (An array of actions may also be useful when implementing undo/redo functionality in software.)
