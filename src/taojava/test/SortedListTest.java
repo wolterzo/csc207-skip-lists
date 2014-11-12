@@ -56,7 +56,7 @@ public class SortedListTest
       } // for
     System.err.println("]");
   } // dump
-  
+
   /**
    * Determine if an iterator only returns values in non-decreasing
    * order.
@@ -182,7 +182,7 @@ public class SortedListTest
     ArrayList<String> operations = new ArrayList<String>();
     // Keep track of the values that are currently in the sorted list.
     ArrayList<Integer> vals = new ArrayList<Integer>();
-    
+
     // Add a bunch of values
     for (int i = 0; i < 1000; i++)
       {
@@ -209,7 +209,8 @@ public class SortedListTest
             vals.remove((Integer) rand);
             if (ints.contains(rand))
               {
-                System.err.println("After removing " + rand + " contains succeeds");
+                System.err.println("After removing " + rand
+                                   + " contains succeeds");
                 ok = false;
               } // if ints.contains(rand)
           } // if we remove
@@ -233,4 +234,96 @@ public class SortedListTest
           } // if (!ok)
       } // for i
   } // randomTest()
+
+  @Test
+  public void containsTest()
+  {
+    int size = 10000;
+    Integer[] rand = new Integer[size];
+    // Create an array of random ints.
+    // add the int to the sorted list
+    for (int i = 0; i < size; i++)
+      {
+        rand[i] = random.nextInt();
+        ints.add(rand[i]);
+      } // for
+    for (int i = 0; i < size; i++)
+      {
+        if (!ints.contains(rand[i]))
+          {
+            System.err.println("ints doesn't contain" + rand[i]);
+            dump(ints);
+            fail("Contains failed");
+          } // if
+      } // for    
+  } // containsTest()
+
+  /**
+   * Test to see if add doesn't add repeat values
+   */
+  @Test
+  public void addTest()
+  {
+    strings.add("Yes");
+    strings.add("No");
+    strings.add("Yes");
+    assertTrue(strings.contains("Yes"));
+    assertTrue(strings.contains("No"));
+    strings.remove("Yes");
+    assertFalse(strings.contains("Yes"));
+  } // addTest()
+
+  /**
+   * A test to see if modifying an iterator invalidates a different iterator.
+   */
+  @Test
+  public void invalidIteratorTest()
+  {
+    for (int i = 0; i < 100; i++)
+      {
+        ints.add(i);
+      } // for
+    Iterator<Integer> iterator1 = ints.iterator();
+    Iterator<Integer> iterator2 = ints.iterator();
+
+    iterator1.next();
+    iterator1.remove();
+
+    try
+      {
+        iterator2.hasNext();
+      }
+    catch (Exception e)
+      {
+        return;
+      }
+    fail("Iterator is still valid after changing ints with a different iterator");
+
+  } // invalidIteratorTest()
+
+  /**
+   * Test to see if the order values are added to the list matters
+   */
+  @Test
+  public void orderAddedTest()
+  {
+    int size = 200;
+    Integer[] rand = new Integer[size];
+    SortedList<Integer> ints2 = ints;
+    for (int i = 0; i < size; i++)
+      {
+        rand[i] = random.nextInt();
+        ints.add(rand[i]);
+      } // for
+    for (int i = size - 1; i >= 0; i--)
+      {
+        ints2.add(rand[i]);
+      } // for
+    Iterator<Integer> it1 = ints.iterator();
+    Iterator<Integer> it2 = ints2.iterator();
+    for (int i = 0; i < 200; i++)
+      {
+        assertTrue(it1.next().equals(it2.next()));
+      } // for
+  } // orderAddedTest()
 } // class SortedListTest
